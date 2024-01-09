@@ -30,6 +30,29 @@ class _HomePageState extends State<HomePage> {
         ),
         backgroundColor: Colors.red,
       ),
+      body: _tasksList(),
+    );
+  }
+
+  Widget _tasksList() {
+    return ListView(
+      children: [
+        ListTile(
+          title: const Text(
+            "Do Exercise!",
+            style: TextStyle(
+              decoration: TextDecoration.lineThrough,
+            ),
+          ),
+          subtitle: Text(
+            DateTime.now().toString(),
+          ),
+          trailing: const Icon(
+            Icons.check_box_outlined,
+            color: Colors.red,
+          ),
+        ),
+      ],
     );
   }
 }
