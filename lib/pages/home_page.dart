@@ -1,7 +1,10 @@
+// ignore_for_file: no_leading_underscores_for_local_identifiers
+
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 class HomePage extends StatefulWidget {
-  HomePage();
+  const HomePage({super.key});
 
   @override
   State<StatefulWidget> createState() {
@@ -10,7 +13,10 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  // ignore: unused_field
   late double _deviceHeight, _deviceWidth;
+
+  String? _newTaskContent;
 
   _HomePageState();
 
@@ -30,8 +36,23 @@ class _HomePageState extends State<HomePage> {
         ),
         backgroundColor: Colors.red,
       ),
-      body: _tasksList(),
+      body: _tasksView(),
       floatingActionButton: _addTaskButton(),
+    );
+  }
+
+  Widget _tasksView() {
+    return FutureBuilder(
+      future: Hive.openBox('tasks'),
+      builder: (BuildContext _context, AsyncSnapshot _snapshot) {
+        if (_snapshot.connectionState == ConnectionState.done) {
+          return _tasksList();
+        } else {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+      },
     );
   }
 
@@ -60,11 +81,30 @@ class _HomePageState extends State<HomePage> {
   Widget _addTaskButton() {
     return FloatingActionButton(
       backgroundColor: Colors.red,
-      onPressed: () {},
+      onPressed: _displayTaskPopup,
       child: const Icon(
         Icons.add,
         color: Colors.white,
       ),
+    );
+  }
+
+  void _displayTaskPopup() {
+    showDialog(
+      context: context,
+      builder: (BuildContext _context) {
+        return AlertDialog(
+          title: const Text("Add New Task!"),
+          content: TextField(
+            onSubmitted: (_value) {},
+            onChanged: (_value) {
+              setState(() {
+                _newTaskContent = _value;
+              });
+            },
+          ),
+        );
+      },
     );
   }
 }
